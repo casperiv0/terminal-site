@@ -19,11 +19,11 @@ export function Input({ entry, handleNewCommand }: Props) {
 
   React.useEffect(() => {
     handleInputAreaClick();
-  }, [entry]);
+  }, [entry]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useEffect(() => {
     if (entry?.command) {
-      setCurrentCommand(entry?.command);
+      setCurrentCommand(entry.command);
     } else {
       setCurrentCommand("");
     }
@@ -66,7 +66,7 @@ export function Input({ entry, handleNewCommand }: Props) {
             className={classNames(
               "fill-current",
               entry
-                ? entry?.status === CommandStatus.Failed
+                ? entry.status === CommandStatus.Failed
                   ? "text-red-500"
                   : "text-green-500"
                 : "text-slate-300",

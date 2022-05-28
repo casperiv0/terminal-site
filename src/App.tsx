@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Input } from "./components/Input";
-import { useHistory } from "./hooks/useHistory";
 import { commandNotFound, helpCommand } from "./lib/commands";
 
 export enum CommandStatus {
