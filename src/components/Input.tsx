@@ -38,6 +38,12 @@ export function Input({ entry, handleNewCommand }: Props) {
 
   function handleInputKeydown(event: React.KeyboardEvent<HTMLInputElement>) {
     const key = event.key;
+    const ctrlKey = event.ctrlKey;
+
+    if (key === "l" && ctrlKey) {
+      event.preventDefault();
+      return handleNewCommand("clear");
+    }
 
     if (key === "Enter" && currentCommand) {
       history.addCommandToHistory(currentCommand);
