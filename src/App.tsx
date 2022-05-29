@@ -22,6 +22,7 @@ export default function App() {
     { output: null, command: null },
   ]);
 
+  const commandsArr = React.useMemo(() => Array.from(commandMap.keys()), [commandMap]);
   const _loadCommands = React.useCallback(async () => {
     setCommandMap(await loadCommands());
   }, []);
@@ -61,7 +62,11 @@ export default function App() {
       return;
     }
 
-    const output = command.render({ command: commandName, args: commandArgs });
+    const output = command.render({
+      commands: commandsArr,
+      command: commandName,
+      args: commandArgs,
+    });
     _addCommandToEntries(idx, {
       status: CommandStatus.Succeeded,
       command: fullCommand,

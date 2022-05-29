@@ -1,12 +1,13 @@
-import { COMMAND_LIST } from "../outputs";
-import { Command } from "../Command";
+import { Command, CommandRenderOptions } from "../Command";
 
 export default class HelpCommand extends Command {
   constructor() {
     super({ name: "help" });
   }
 
-  render(): string | JSX.Element {
+  render({ commands }: CommandRenderOptions): string | JSX.Element {
+    console.log({ commands });
+
     return (
       <div>
         <p className="font-semibold">Hello world, welcome!</p>
@@ -15,7 +16,7 @@ export default class HelpCommand extends Command {
           <p className="underline">Available commands</p>
 
           <ul className="flex flex-col">
-            {COMMAND_LIST.map((command) => (
+            {commands.map((command) => (
               <li key={command}>{command}</li>
             ))}
           </ul>

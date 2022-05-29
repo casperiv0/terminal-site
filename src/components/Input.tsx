@@ -120,7 +120,7 @@ export function Input({ entry, commandMap, handleNewCommand }: Props) {
     if (key === "Tab") {
       event.preventDefault();
       if (currentCommand.length <= 0) return;
-      const commands = Object.keys(commandMap);
+      const commands = Array.from(commandMap.keys());
 
       const command = commands.find((command) => command.startsWith(commandName));
       if (command) {

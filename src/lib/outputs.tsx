@@ -2,7 +2,6 @@ export interface CommandOutputOptions {
   command: string;
 }
 
-export const COMMAND_LIST = ["help", "about", "whoami", "date", "http-cat", "clear"];
 export type CommandOutputFunc = (options: CommandOutputOptions) => JSX.Element | string;
 
 export const initBanner: CommandOutputFunc = () => (

@@ -5,6 +5,7 @@ interface CommandOptions {
 const commandMap = new Map<string, Command>();
 
 export interface CommandRenderOptions {
+  commands: string[];
   command: string;
   args: string[];
 }
