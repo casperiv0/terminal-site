@@ -7,7 +7,7 @@ import { COMMAND_LIST } from "../lib/outputs";
 
 interface Props {
   entry: CommandEntry | null;
-  handleNewCommand(command: string): void;
+  handleNewCommand(args: string[]): void;
 }
 
 export function Input({ entry, handleNewCommand }: Props) {
@@ -18,7 +18,8 @@ export function Input({ entry, handleNewCommand }: Props) {
   const [currentCommand, setCurrentCommand] = React.useState<string>(entry?.command ?? "");
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
-  const isValidCommand = COMMAND_LIST.includes(currentCommand);
+  const [commandName] = currentCommand.split(" ");
+  const isValidCommand = COMMAND_LIST.includes(commandName);
 
   React.useEffect(() => {
     handleInputAreaClick();
@@ -48,15 +49,20 @@ export function Input({ entry, handleNewCommand }: Props) {
 
     if (key === "l" && ctrlKey) {
       event.preventDefault();
-      handleNewCommand("clear");
+      handleNewCommand(["clear"]);
     }
 
     if (key === "c" && ctrlKey) {
       event.preventDefault();
+      console.log("here");
+
+      setCurrentCommand("");
+      setHistoryCount(0);
+      handleNewCommand([""]);
     }
 
     if (key === "Enter") {
-      handleNewCommand(currentCommand);
+      handleNewCommand(currentCommand.split(" "));
 
       if (currentCommand) {
         setCurrentCommand("");
@@ -67,7 +73,6 @@ export function Input({ entry, handleNewCommand }: Props) {
 
     if (key === "ArrowUp") {
       const lastEnteredCommand = history.getPreviousCommand(historyCount);
-      console.log({ history, lastEnteredCommand });
 
       if (lastEnteredCommand) {
         setCurrentCommand(lastEnteredCommand);
@@ -75,19 +80,9 @@ export function Input({ entry, handleNewCommand }: Props) {
       }
     }
 
-    // if (key === "ArrowDown") {
-    //   const lastEnteredCommand = history.getNextCommand(historyCount);
-
-    //   if (lastEnteredCommand) {
-    //     setCurrentCommand(lastEnteredCommand);
-    //     setHistoryCount((p) => p - 1);
-    //   } else {
-    //     setCurrentCommand("");
-    //   }
-    // }
-
     if (key === "Tab") {
       event.preventDefault();
+      if (currentCommand.length <= 0) return;
 
       const command = COMMAND_LIST.find((command) => command.startsWith(currentCommand));
       if (command) {
@@ -115,7 +110,12 @@ export function Input({ entry, handleNewCommand }: Props) {
           />
         </span>
         <span className="mr-2 text-blue-300">~</span>
-        <span className={classNames(isValidCommand ? "text-green-300" : "text-red-300")}>
+        <span
+          className={classNames(
+            isValidCommand ? "text-green-300" : "text-red-300",
+            "whitespace-pre-wrap",
+          )}
+        >
           {currentCommand}
         </span>
         {(entry && typeof entry.command === "undefined") || entry?.command ? null : (

@@ -16,7 +16,10 @@ export interface CommandEntry {
 
 function App() {
   const [commandMap, setCommandMap] = React.useState(new Map<string, Command>());
-  const [entries, setEntries] = React.useState<CommandEntry[]>([{ output: null, command: null }]);
+  const [entries, setEntries] = React.useState<CommandEntry[]>([
+    { output: initBanner({ command: "" }), command: undefined },
+    { output: null, command: null },
+  ]);
 
   const _loadCommands = React.useCallback(async () => {
     setCommandMap(await loadCommands());
@@ -24,14 +27,10 @@ function App() {
 
   React.useEffect(() => {
     _loadCommands();
-
-    setEntries([
-      { output: initBanner({ command: "" }), command: undefined },
-      { output: null, command: null },
-    ]);
   }, [_loadCommands]);
 
-  function handleNewCommand(commandName: string, idx: number) {
+  function handleNewCommand(args: string[], idx: number) {
+    const [commandName, ...commandArgs] = args;
     const commandFunctionOptions = { command: commandName };
 
     if (commandName === "clear") {
@@ -57,7 +56,7 @@ function App() {
       return;
     }
 
-    const output = command.render({ command: commandName });
+    const output = command.render({ command: commandName, args: commandArgs });
     _addCommandToEntries(idx, {
       status: CommandStatus.Succeeded,
       command: commandName,

@@ -4,8 +4,9 @@ interface CommandOptions {
 
 const commandMap = new Map<string, Command>();
 
-interface CommandRenderOptions {
+export interface CommandRenderOptions {
   command: string;
+  args: string[];
 }
 
 export abstract class Command {
@@ -23,6 +24,8 @@ export async function loadCommands() {
     import("./commands/HelpCommand"),
     import("./commands/AboutCommand"),
     import("./commands/WhoamiCommand"),
+    import("./commands/DateCommand"),
+    import("./commands/HttpCatCommand"),
   ]);
 
   for (const file of commands) {

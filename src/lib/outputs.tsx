@@ -2,7 +2,7 @@ export interface CommandOutputOptions {
   command: string;
 }
 
-export const COMMAND_LIST = ["help", "about", "whoami", "clear"];
+export const COMMAND_LIST = ["help", "about", "whoami", "date", "http-cat", "clear"];
 export type CommandOutputFunc = (options: CommandOutputOptions) => JSX.Element | string;
 
 export const initBanner: CommandOutputFunc = () => (
@@ -17,7 +17,7 @@ export const initBanner: CommandOutputFunc = () => (
  ╚═════╝ ╚═╝  ╚═╝ ╚══════╝ ╚═╝      ╚══════╝ ╚═╝  ╚═╝`}
     </span>
     <span className="block mt-3">
-      {"Welcome to this epic site! Enter 'help' to see list of available commands"}
+      {"Welcome to this epic site! Enter 'help' to see list of available commands."}
     </span>
   </p>
 );

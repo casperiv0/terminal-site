@@ -23,10 +23,5 @@ export function useHistory() {
     return historyStore.history[idxOfCommand] ?? null;
   }
 
-  function getNextCommand(recursiveIdx: number) {
-    const idxOfCommand = historyStore.history.length - 1 + recursiveIdx;
-    return historyStore.history[idxOfCommand] ?? null;
-  }
-
-  return { addCommandToHistory, getPreviousCommand, getNextCommand, history: historyStore.history };
+  return { addCommandToHistory, getPreviousCommand, history: historyStore.history };
 }
