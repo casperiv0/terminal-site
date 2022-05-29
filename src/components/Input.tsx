@@ -124,7 +124,7 @@ export function Input({ entry, handleNewCommand }: Props) {
         <span className="mr-2 text-blue-300">~</span>
         <span
           className={classNames(
-            isValidCommand ? "text-green-300" : "text-red-300",
+            isValidCommand ? "text-green-500" : "text-red-500",
             "whitespace-pre-wrap",
           )}
         >
@@ -134,7 +134,7 @@ export function Input({ entry, handleNewCommand }: Props) {
           <span
             data-cursor
             className={classNames(
-              "ml-0.5 block w-2.5 h-[18px] bg-white",
+              "ml-0.5 block w-2.5 h-[18px] bg-[#464e57]",
               isFocused && "animate-blink",
             )}
           />
@@ -142,6 +142,7 @@ export function Input({ entry, handleNewCommand }: Props) {
       </div>
 
       <input
+        type="text"
         autoFocus
         disabled={!!entry?.command}
         onBlur={() => setIsFocused(false)}
