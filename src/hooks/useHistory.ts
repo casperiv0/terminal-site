@@ -19,12 +19,12 @@ export function useHistory() {
   }
 
   function getPreviousCommand(index: number) {
-    const idxOfCommand = historyStore.history.length - 1 - index;
+    const idxOfCommand = historyStore.history.length - index;
     return historyStore.history[idxOfCommand] ?? null;
   }
 
   function getNextCommand(index: number) {
-    const idxOfCommand = historyStore.history.length - index;
+    const idxOfCommand = index - historyStore.history.length;
     return historyStore.history[idxOfCommand] ?? null;
   }
 

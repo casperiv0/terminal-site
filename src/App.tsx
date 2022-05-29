@@ -14,7 +14,7 @@ export interface CommandEntry {
   status?: CommandStatus;
 }
 
-function App() {
+export default function App() {
   const [commandMap, setCommandMap] = React.useState(new Map<string, Command>());
   const [entries, setEntries] = React.useState<CommandEntry[]>([
     { output: initBanner({ command: "" }), command: undefined },
@@ -98,5 +98,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

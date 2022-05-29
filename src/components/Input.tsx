@@ -14,7 +14,7 @@ export function Input({ entry, handleNewCommand }: Props) {
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const history = useHistory();
 
-  const [lastCommandIndex, setLastCommandIndex] = React.useState(0);
+  const [lastCommandCount, setLastCommandCount] = React.useState(1);
   const [currentCommand, setCurrentCommand] = React.useState<string>(entry?.command ?? "");
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
@@ -57,7 +57,7 @@ export function Input({ entry, handleNewCommand }: Props) {
       console.log("here");
 
       setCurrentCommand("");
-      setLastCommandIndex(0);
+      setLastCommandCount(1);
       handleNewCommand([""]);
     }
 
@@ -66,33 +66,29 @@ export function Input({ entry, handleNewCommand }: Props) {
 
       if (currentCommand) {
         setCurrentCommand("");
-        setLastCommandIndex(0);
+        setLastCommandCount(1);
         history.addCommandToHistory(currentCommand);
       }
     }
 
     if (key === "ArrowUp") {
-      const lastEnteredCommand = history.getPreviousCommand(lastCommandIndex);
+      const lastEnteredCommand = history.getPreviousCommand(lastCommandCount);
 
       if (lastEnteredCommand) {
         setCurrentCommand(lastEnteredCommand);
-        setLastCommandIndex((p) => p + 1);
+        setLastCommandCount((p) => p + 1);
       }
     }
 
     if (key === "ArrowDown") {
-      const index = lastCommandIndex - 1;
+      const nextEnteredCommand = history.getNextCommand(lastCommandCount);
 
-      if (index < 0) {
-        setCurrentCommand("");
-        setLastCommandIndex(0);
+      if (nextEnteredCommand) {
+        setCurrentCommand(nextEnteredCommand);
+        setLastCommandCount((p) => p + 1);
       } else {
-        setLastCommandIndex((p) => p - 1);
-        const lastEnteredCommand = history.getNextCommand(lastCommandIndex);
-
-        if (lastEnteredCommand) {
-          setCurrentCommand(lastEnteredCommand);
-        }
+        setLastCommandCount(1);
+        setCurrentCommand("");
       }
     }
 
