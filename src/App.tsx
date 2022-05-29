@@ -87,6 +87,7 @@ export default function App() {
               <Input
                 entry={commandEntry}
                 handleNewCommand={(command) => handleNewCommand(command, idx)}
+                commandMap={commandMap}
               />
             ) : null}
 

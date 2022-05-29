@@ -3,17 +3,18 @@ import { ArrowRight } from "react-bootstrap-icons";
 import { CommandEntry, CommandStatus } from "../App";
 import { useHistory } from "../hooks/useHistory";
 import { classNames } from "../lib/classNames";
-import { COMMAND_LIST } from "../lib/outputs";
+import { Command } from "../lib/Command";
 import { getCommandName } from "../lib/utils";
 
 interface Props {
   entry: CommandEntry | null;
+  commandMap: Map<string, Command>;
   handleNewCommand(args: string[]): void;
 }
 
 let hasAskedForPassword = false;
 
-export function Input({ entry, handleNewCommand }: Props) {
+export function Input({ entry, commandMap, handleNewCommand }: Props) {
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const passwordRef = React.useRef<HTMLInputElement | null>(null);
   const history = useHistory();
@@ -26,7 +27,7 @@ export function Input({ entry, handleNewCommand }: Props) {
   const [password, setPassword] = React.useState("");
 
   const { isSudo, commandName } = getCommandName(currentCommand.split(" "));
-  const isValidCommand = COMMAND_LIST.includes(commandName);
+  const isValidCommand = commandMap.has(commandName);
 
   React.useEffect(() => {
     handleInputAreaClick();
@@ -77,6 +78,7 @@ export function Input({ entry, handleNewCommand }: Props) {
       if (isSudo && !password && !hasAskedForPassword) {
         setAskForPassword(true);
         setIsFocused(false);
+        hasAskedForPassword = true;
 
         setTimeout(() => {
           passwordRef.current?.focus();
@@ -86,7 +88,6 @@ export function Input({ entry, handleNewCommand }: Props) {
       }
 
       handleNewCommand(currentCommand.split(" "));
-      hasAskedForPassword = true;
 
       if (currentCommand) {
         setCurrentCommand("");
@@ -107,7 +108,7 @@ export function Input({ entry, handleNewCommand }: Props) {
     if (key === "ArrowDown") {
       const nextEnteredCommand = history.getNextCommand(lastCommandCount);
 
-      if (nextEnteredCommand) {
+      if (nextEnteredCommand && lastCommandCount !== 1) {
         setCurrentCommand(nextEnteredCommand);
         setLastCommandCount((p) => p + 1);
       } else {
@@ -119,8 +120,9 @@ export function Input({ entry, handleNewCommand }: Props) {
     if (key === "Tab") {
       event.preventDefault();
       if (currentCommand.length <= 0) return;
+      const commands = Object.keys(commandMap);
 
-      const command = COMMAND_LIST.find((command) => command.startsWith(commandName));
+      const command = commands.find((command) => command.startsWith(commandName));
       if (command) {
         setCurrentCommand(`${isSudo ? "sudo " : ""}${command}`);
       }

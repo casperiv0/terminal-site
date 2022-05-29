@@ -29,7 +29,10 @@ export default class HelpCommand extends Command {
             <kbd>[ctrl+l]</kbd>: clear terminal
           </span>
           <span>
-            <kbd>[arrowUp]</kbd>: previous command
+            <kbd>[arrow-up]</kbd>: previous used command
+          </span>
+          <span>
+            <kbd>[arrow-down]</kbd>: next used command
           </span>
         </p>
       </div>

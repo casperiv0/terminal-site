@@ -26,6 +26,7 @@ export async function loadCommands() {
     import("./commands/WhoamiCommand"),
     import("./commands/DateCommand"),
     import("./commands/HttpCatCommand"),
+    import("./commands/RepoCommand"),
   ]);
 
   for (const file of commands) {
