@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Input } from "./components/Input";
 import { Command, loadCommands } from "./lib/Command";
-import { commandNotFound } from "./lib/outputs";
+import { commandNotFound, initBanner } from "./lib/outputs";
 
 export enum CommandStatus {
   Succeeded,
@@ -24,6 +24,11 @@ function App() {
 
   React.useEffect(() => {
     _loadCommands();
+
+    setEntries([
+      { output: initBanner({ command: "" }), command: undefined },
+      { output: null, command: null },
+    ]);
   }, [_loadCommands]);
 
   function handleNewCommand(commandName: string, idx: number) {
@@ -70,15 +75,22 @@ function App() {
     <div className="m-12">
       {entries.map((entry, idx) => {
         const commandEntry = entry.command !== null ? entry : null;
+        const showInput = typeof entry.command !== "undefined" || !entry.output;
 
         return (
           <div key={idx} data-status={commandEntry?.status} data-entry={idx}>
-            <Input
-              entry={commandEntry}
-              handleNewCommand={(command) => handleNewCommand(command, idx)}
-            />
+            {showInput ? (
+              <Input
+                entry={commandEntry}
+                handleNewCommand={(command) => handleNewCommand(command, idx)}
+              />
+            ) : null}
 
-            <div className="ml-[52px]" data-output={idx}>
+            <div
+              style={{ lineHeight: "normal" }}
+              className="ml-[52px] whitespace-pre-wrap"
+              data-output={idx}
+            >
               {entry.output}
             </div>
           </div>
