@@ -4,21 +4,28 @@ import { CommandEntry, CommandStatus } from "../App";
 import { useHistory } from "../hooks/useHistory";
 import { classNames } from "../lib/classNames";
 import { COMMAND_LIST } from "../lib/outputs";
+import { getCommandName } from "../lib/utils";
 
 interface Props {
   entry: CommandEntry | null;
   handleNewCommand(args: string[]): void;
 }
 
+let hasAskedForPassword = false;
+
 export function Input({ entry, handleNewCommand }: Props) {
   const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const passwordRef = React.useRef<HTMLInputElement | null>(null);
   const history = useHistory();
 
   const [lastCommandCount, setLastCommandCount] = React.useState(1);
   const [currentCommand, setCurrentCommand] = React.useState<string>(entry?.command ?? "");
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
-  const [commandName] = currentCommand.split(" ");
+  const [askForPassword, setAskForPassword] = React.useState(false);
+  const [password, setPassword] = React.useState("");
+
+  const { isSudo, commandName } = getCommandName(currentCommand.split(" "));
   const isValidCommand = COMMAND_LIST.includes(commandName);
 
   React.useEffect(() => {
@@ -37,13 +44,19 @@ export function Input({ entry, handleNewCommand }: Props) {
   }, [entry]);
 
   function handleInputAreaClick() {
-    if (entry) return;
+    if (entry || askForPassword) return;
 
     inputRef.current?.focus();
     setIsFocused(true);
   }
 
-  function handleInputKeydown(event: React.KeyboardEvent<HTMLInputElement>) {
+  function handlePasswordKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter") {
+      handleInputKeydown(event, password);
+    }
+  }
+
+  function handleInputKeydown(event: React.KeyboardEvent<HTMLInputElement>, password?: string) {
     const key = event.key;
     const ctrlKey = event.ctrlKey;
 
@@ -54,7 +67,6 @@ export function Input({ entry, handleNewCommand }: Props) {
 
     if (key === "c" && ctrlKey) {
       event.preventDefault();
-      console.log("here");
 
       setCurrentCommand("");
       setLastCommandCount(1);
@@ -62,7 +74,19 @@ export function Input({ entry, handleNewCommand }: Props) {
     }
 
     if (key === "Enter") {
+      if (isSudo && !password && !hasAskedForPassword) {
+        setAskForPassword(true);
+        setIsFocused(false);
+
+        setTimeout(() => {
+          passwordRef.current?.focus();
+        }, 50);
+
+        return;
+      }
+
       handleNewCommand(currentCommand.split(" "));
+      hasAskedForPassword = true;
 
       if (currentCommand) {
         setCurrentCommand("");
@@ -96,9 +120,9 @@ export function Input({ entry, handleNewCommand }: Props) {
       event.preventDefault();
       if (currentCommand.length <= 0) return;
 
-      const command = COMMAND_LIST.find((command) => command.startsWith(currentCommand));
+      const command = COMMAND_LIST.find((command) => command.startsWith(commandName));
       if (command) {
-        setCurrentCommand(command);
+        setCurrentCommand(`${isSudo ? "sudo " : ""}${command}`);
       }
     }
 
@@ -106,7 +130,10 @@ export function Input({ entry, handleNewCommand }: Props) {
   }
 
   return (
-    <div onClick={handleInputAreaClick} className="relative w-full h-10 p-3">
+    <div
+      onClick={handleInputAreaClick}
+      className={classNames("w-full p-3", askForPassword ? "h-16" : "h-10")}
+    >
       <div className="flex items-center h-4">
         <span className="mr-2">
           <ArrowRight
@@ -141,16 +168,32 @@ export function Input({ entry, handleNewCommand }: Props) {
         )}
       </div>
 
+      {askForPassword ? (
+        <div className="mt-1 block ml-10">
+          <span>[sudo] password for Dev-CasperTheGhost:</span>
+          <input
+            ref={passwordRef}
+            type="password"
+            className="ml-2 bg-transparent outline-none"
+            autoComplete="off"
+            aria-autocomplete="none"
+            onKeyDown={handlePasswordKeyDown}
+            value={password}
+            onChange={(ev) => setPassword(ev.currentTarget.value)}
+          />
+        </div>
+      ) : null}
+
       <input
         type="text"
         autoFocus
-        disabled={!!entry?.command}
+        disabled={askForPassword || !!entry?.command}
         onBlur={() => setIsFocused(false)}
         ref={inputRef}
         className="opacity-0 pointer-events-none !h-0 !w-0"
         value={currentCommand}
         onChange={(ev) => setCurrentCommand(ev.currentTarget.value.toLowerCase())}
-        onKeyDown={handleInputKeydown}
+        onKeyDown={(ev) => handleInputKeydown(ev, password)}
       />
     </div>
   );

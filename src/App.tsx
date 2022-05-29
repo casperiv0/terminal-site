@@ -2,6 +2,7 @@ import * as React from "react";
 import { Input } from "./components/Input";
 import { Command, loadCommands } from "./lib/Command";
 import { commandNotFound, initBanner } from "./lib/outputs";
+import { getCommandName } from "./lib/utils";
 
 export enum CommandStatus {
   Succeeded,
@@ -30,7 +31,11 @@ export default function App() {
   }, [_loadCommands]);
 
   function handleNewCommand(args: string[], idx: number) {
-    const [commandName, ...commandArgs] = args;
+    const [, ...commandArgs] = args;
+
+    const { commandName, isSudo } = getCommandName(args);
+    const fullCommand = isSudo ? `sudo ${commandName}` : commandName;
+
     const commandFunctionOptions = { command: commandName };
 
     if (commandName === "clear") {
@@ -49,7 +54,7 @@ export default function App() {
     if (!command) {
       _addCommandToEntries(idx, {
         status: CommandStatus.Failed,
-        command: commandName,
+        command: fullCommand,
         output: commandNotFound(commandFunctionOptions),
       });
 
@@ -59,7 +64,7 @@ export default function App() {
     const output = command.render({ command: commandName, args: commandArgs });
     _addCommandToEntries(idx, {
       status: CommandStatus.Succeeded,
-      command: commandName,
+      command: fullCommand,
       output,
     });
   }
