@@ -25,10 +25,13 @@ export function Input({ entry, handleNewCommand }: Props) {
   }, [entry]); // eslint-disable-line react-hooks/exhaustive-deps
 
   React.useEffect(() => {
-    if (entry?.command) {
-      setCurrentCommand(entry.command);
-    } else {
+    if (!entry) {
       setCurrentCommand("");
+      return;
+    }
+
+    if (entry.command) {
+      setCurrentCommand(entry.command);
     }
   }, [entry]);
 
@@ -52,12 +55,14 @@ export function Input({ entry, handleNewCommand }: Props) {
       event.preventDefault();
     }
 
-    if (key === "Enter" && currentCommand) {
-      history.addCommandToHistory(currentCommand);
-
+    if (key === "Enter") {
       handleNewCommand(currentCommand);
-      setCurrentCommand("");
-      setHistoryCount(0);
+
+      if (currentCommand) {
+        setCurrentCommand("");
+        setHistoryCount(0);
+        history.addCommandToHistory(currentCommand);
+      }
     }
 
     if (key === "ArrowUp") {
@@ -113,7 +118,7 @@ export function Input({ entry, handleNewCommand }: Props) {
         <span className={classNames(isValidCommand ? "text-green-300" : "text-red-300")}>
           {currentCommand}
         </span>
-        {entry?.command ? null : (
+        {(entry && typeof entry.command === "undefined") || entry?.command ? null : (
           <span
             data-cursor
             className={classNames(

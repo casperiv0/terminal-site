@@ -10,7 +10,7 @@ export enum CommandStatus {
 
 export interface CommandEntry {
   output: JSX.Element | string | null;
-  command: string | null;
+  command: string | null | undefined;
   status?: CommandStatus;
 }
 
@@ -31,6 +31,14 @@ function App() {
 
     if (commandName === "clear") {
       return setEntries([{ command: null, output: null, status: CommandStatus.Succeeded }]);
+    }
+
+    if (commandName.trim() === "") {
+      return _addCommandToEntries(idx, {
+        status: CommandStatus.Succeeded,
+        command: undefined,
+        output: null,
+      });
     }
 
     const command = commandMap.get(commandName);
@@ -61,7 +69,7 @@ function App() {
   return (
     <div className="m-12">
       {entries.map((entry, idx) => {
-        const commandEntry = entry.command ? entry : null;
+        const commandEntry = entry.command !== null ? entry : null;
 
         return (
           <div key={idx} data-status={commandEntry?.status} data-entry={idx}>
