@@ -74,11 +74,11 @@ function App() {
     <div className="m-12">
       {entries.map((entry, idx) => {
         const commandEntry = entry.command !== null ? entry : null;
-        const showInput = typeof entry.command !== "undefined" || !entry.output;
+        const showInputField = typeof entry.command !== "undefined" || !entry.output;
 
         return (
           <div key={idx} data-status={commandEntry?.status} data-entry={idx}>
-            {showInput ? (
+            {showInputField ? (
               <Input
                 entry={commandEntry}
                 handleNewCommand={(command) => handleNewCommand(command, idx)}

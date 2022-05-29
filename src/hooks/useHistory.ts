@@ -18,10 +18,15 @@ export function useHistory() {
     historyStore.setHistory(newHistory);
   }
 
-  function getPreviousCommand(recursiveIdx: number) {
-    const idxOfCommand = historyStore.history.length - 1 - recursiveIdx;
+  function getPreviousCommand(index: number) {
+    const idxOfCommand = historyStore.history.length - 1 - index;
     return historyStore.history[idxOfCommand] ?? null;
   }
 
-  return { addCommandToHistory, getPreviousCommand, history: historyStore.history };
+  function getNextCommand(index: number) {
+    const idxOfCommand = historyStore.history.length - index;
+    return historyStore.history[idxOfCommand] ?? null;
+  }
+
+  return { addCommandToHistory, getNextCommand, getPreviousCommand, history: historyStore.history };
 }

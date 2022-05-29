@@ -14,7 +14,7 @@ export function Input({ entry, handleNewCommand }: Props) {
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const history = useHistory();
 
-  const [historyCount, setHistoryCount] = React.useState(0);
+  const [lastCommandIndex, setLastCommandIndex] = React.useState(0);
   const [currentCommand, setCurrentCommand] = React.useState<string>(entry?.command ?? "");
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
@@ -57,7 +57,7 @@ export function Input({ entry, handleNewCommand }: Props) {
       console.log("here");
 
       setCurrentCommand("");
-      setHistoryCount(0);
+      setLastCommandIndex(0);
       handleNewCommand([""]);
     }
 
@@ -66,17 +66,33 @@ export function Input({ entry, handleNewCommand }: Props) {
 
       if (currentCommand) {
         setCurrentCommand("");
-        setHistoryCount(0);
+        setLastCommandIndex(0);
         history.addCommandToHistory(currentCommand);
       }
     }
 
     if (key === "ArrowUp") {
-      const lastEnteredCommand = history.getPreviousCommand(historyCount);
+      const lastEnteredCommand = history.getPreviousCommand(lastCommandIndex);
 
       if (lastEnteredCommand) {
         setCurrentCommand(lastEnteredCommand);
-        setHistoryCount((p) => p + 1);
+        setLastCommandIndex((p) => p + 1);
+      }
+    }
+
+    if (key === "ArrowDown") {
+      const index = lastCommandIndex - 1;
+
+      if (index < 0) {
+        setCurrentCommand("");
+        setLastCommandIndex(0);
+      } else {
+        setLastCommandIndex((p) => p - 1);
+        const lastEnteredCommand = history.getNextCommand(lastCommandIndex);
+
+        if (lastEnteredCommand) {
+          setCurrentCommand(lastEnteredCommand);
+        }
       }
     }
 
