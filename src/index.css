@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "CascadiaCode";
+  src: url("fonts/CascadiaCode.woff2") format("woff2"),
+    url("fonts/CascadiaCode.ttf") format("truetype");
+}
+
+body {
+  font-family: "CascadiaCode", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+}
+
 .animate-blink {
   animation: blink-animation 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
 }

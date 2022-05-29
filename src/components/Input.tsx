@@ -3,6 +3,7 @@ import { ArrowRight } from "react-bootstrap-icons";
 import { CommandEntry, CommandStatus } from "../App";
 import { useHistory } from "../hooks/useHistory";
 import { classNames } from "../lib/classNames";
+import { COMMAND_LIST } from "../lib/outputs";
 
 interface Props {
   entry: CommandEntry | null;
@@ -16,6 +17,8 @@ export function Input({ entry, handleNewCommand }: Props) {
   const [historyCount, setHistoryCount] = React.useState(0);
   const [currentCommand, setCurrentCommand] = React.useState<string>(entry?.command ?? "");
   const [isFocused, setIsFocused] = React.useState<boolean>(false);
+
+  const isValidCommand = COMMAND_LIST.includes(currentCommand);
 
   React.useEffect(() => {
     handleInputAreaClick();
@@ -42,7 +45,11 @@ export function Input({ entry, handleNewCommand }: Props) {
 
     if (key === "l" && ctrlKey) {
       event.preventDefault();
-      return handleNewCommand("clear");
+      handleNewCommand("clear");
+    }
+
+    if (key === "c" && ctrlKey) {
+      event.preventDefault();
     }
 
     if (key === "Enter" && currentCommand) {
@@ -55,9 +62,31 @@ export function Input({ entry, handleNewCommand }: Props) {
 
     if (key === "ArrowUp") {
       const lastEnteredCommand = history.getPreviousCommand(historyCount);
+      console.log({ history, lastEnteredCommand });
+
       if (lastEnteredCommand) {
         setCurrentCommand(lastEnteredCommand);
         setHistoryCount((p) => p + 1);
+      }
+    }
+
+    // if (key === "ArrowDown") {
+    //   const lastEnteredCommand = history.getNextCommand(historyCount);
+
+    //   if (lastEnteredCommand) {
+    //     setCurrentCommand(lastEnteredCommand);
+    //     setHistoryCount((p) => p - 1);
+    //   } else {
+    //     setCurrentCommand("");
+    //   }
+    // }
+
+    if (key === "Tab") {
+      event.preventDefault();
+
+      const command = COMMAND_LIST.find((command) => command.startsWith(currentCommand));
+      if (command) {
+        setCurrentCommand(command);
       }
     }
 
@@ -80,8 +109,10 @@ export function Input({ entry, handleNewCommand }: Props) {
             width={15}
           />
         </span>
-        <span className="mr-2 text-blue-300">$</span>
-        <span>{currentCommand}</span>
+        <span className="mr-2 text-blue-300">~</span>
+        <span className={classNames(isValidCommand ? "text-green-300" : "text-red-300")}>
+          {currentCommand}
+        </span>
         {entry?.command ? null : (
           <span
             data-cursor
@@ -94,12 +125,13 @@ export function Input({ entry, handleNewCommand }: Props) {
       </div>
 
       <input
+        autoFocus
         disabled={!!entry?.command}
         onBlur={() => setIsFocused(false)}
         ref={inputRef}
         className="opacity-0 pointer-events-none !h-0 !w-0"
         value={currentCommand}
-        onChange={(ev) => setCurrentCommand(ev.currentTarget.value)}
+        onChange={(ev) => setCurrentCommand(ev.currentTarget.value.toLowerCase())}
         onKeyDown={handleInputKeydown}
       />
     </div>
