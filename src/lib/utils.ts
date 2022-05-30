@@ -3,6 +3,7 @@ export function getCommandName(args: string[]) {
 
   const isSudo = _commandName === "sudo" && rest.length >= 1;
   const commandName = isSudo ? rest[0] : _commandName;
+  const commandArgs = isSudo ? rest.slice(1, rest.length) : rest;
 
-  return { isSudo, commandName };
+  return { isSudo, commandArgs, commandName };
 }

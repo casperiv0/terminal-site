@@ -13,6 +13,7 @@ export interface CommandEntry {
   output: JSX.Element | string | null;
   command: string | null | undefined;
   status?: CommandStatus;
+  args?: string[];
 }
 
 export default function App() {
@@ -33,9 +34,8 @@ export default function App() {
   }, [_loadCommands]);
 
   function handleNewCommand(args: string[], idx: number) {
-    const { commandName, isSudo } = getCommandName(args);
+    const { commandName, commandArgs, isSudo } = getCommandName(args);
     const fullCommand = isSudo ? `sudo ${commandName}` : commandName;
-
     const commandFunctionOptions = { command: commandName };
 
     if (commandName === "clear") {
@@ -47,6 +47,7 @@ export default function App() {
         status: CommandStatus.Succeeded,
         command: undefined,
         output: null,
+        args: commandArgs,
       });
     }
 
@@ -56,6 +57,7 @@ export default function App() {
         status: CommandStatus.Failed,
         command: fullCommand,
         output: commandNotFound(commandFunctionOptions),
+        args: commandArgs,
       });
 
       return;
@@ -69,6 +71,7 @@ export default function App() {
       status: CommandStatus.Succeeded,
       command: fullCommand,
       output,
+      args: commandArgs,
     });
   }
 
