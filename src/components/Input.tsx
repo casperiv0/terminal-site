@@ -160,7 +160,6 @@ export function Input({ entry, commandMap, handleNewCommand }: Props) {
         >
           {currentCommand}
         </span>
-        {entry?.args?.length ? <span className="ml-2">{entry.args.join(" ")}</span> : null}
         {(entry && typeof entry.command === "undefined") || entry?.command ? null : (
           <span
             data-cursor

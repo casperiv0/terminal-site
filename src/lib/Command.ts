@@ -7,7 +7,6 @@ const commandMap = new Map<string, Command>();
 export interface CommandRenderOptions {
   commands: string[];
   command: string;
-  args: string[];
 }
 
 export abstract class Command {
@@ -26,8 +25,8 @@ export async function loadCommands() {
     import("./commands/AboutCommand"),
     import("./commands/WhoamiCommand"),
     import("./commands/DateCommand"),
-    import("./commands/HttpCatCommand"),
     import("./commands/RepoCommand"),
+    import("./commands/SudoCommand"),
   ]);
 
   for (const file of commands) {
