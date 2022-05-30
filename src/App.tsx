@@ -13,9 +13,11 @@ export interface CommandEntry {
   output: JSX.Element | string | null;
   command: string | null | undefined;
   status?: CommandStatus;
+  args?: string[];
 }
 
 export default function App() {
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const [commandMap, setCommandMap] = React.useState(new Map<string, Command>());
   const [entries, setEntries] = React.useState<CommandEntry[]>([
     { output: initBanner({ command: "" }), command: undefined },
@@ -48,6 +50,7 @@ export default function App() {
         status: CommandStatus.Succeeded,
         command: undefined,
         output: null,
+        args: commandArgs,
       });
     }
 
@@ -57,6 +60,7 @@ export default function App() {
         status: CommandStatus.Failed,
         command: fullCommand,
         output: commandNotFound(commandFunctionOptions),
+        args: commandArgs,
       });
 
       return;
@@ -71,6 +75,7 @@ export default function App() {
       status: CommandStatus.Succeeded,
       command: fullCommand,
       output,
+      args: commandArgs,
     });
   }
 
@@ -81,7 +86,7 @@ export default function App() {
   }
 
   return (
-    <div className="m-12">
+    <div ref={containerRef} className="m-12">
       {entries.map((entry, idx) => {
         const commandEntry = entry.command !== null ? entry : null;
         const showInputField = typeof entry.command !== "undefined" || !entry.output;

@@ -6,8 +6,6 @@ export default class HelpCommand extends Command {
   }
 
   render({ commands }: CommandRenderOptions): string | JSX.Element {
-    console.log({ commands });
-
     return (
       <div>
         <p className="font-semibold">Hello world, welcome!</p>

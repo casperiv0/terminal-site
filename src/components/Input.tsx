@@ -48,6 +48,7 @@ export function Input({ entry, commandMap, handleNewCommand }: Props) {
     if (entry || askForPassword) return;
 
     inputRef.current?.focus();
+    inputRef.current?.scrollIntoView({ behavior: "smooth" });
     setIsFocused(true);
   }
 
@@ -159,6 +160,7 @@ export function Input({ entry, commandMap, handleNewCommand }: Props) {
         >
           {currentCommand}
         </span>
+        {entry?.args?.length ? <span className="ml-2">{entry.args.join(" ")}</span> : null}
         {(entry && typeof entry.command === "undefined") || entry?.command ? null : (
           <span
             data-cursor
