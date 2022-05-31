@@ -5,8 +5,8 @@ import { commandNotFound, initBanner } from "./lib/outputs";
 import { getCommandName } from "./lib/utils";
 
 export enum CommandStatus {
-  Succeeded,
-  Failed,
+  Succeeded = "succeeded",
+  Failed = "failed",
 }
 
 export interface CommandEntry {
