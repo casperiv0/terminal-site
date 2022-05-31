@@ -5,6 +5,7 @@ import { commandNotFound, initBanner } from "./lib/outputs";
 import { getCommandName } from "./lib/utils";
 
 export enum CommandStatus {
+  Init = "init",
   Succeeded = "succeeded",
   Failed = "failed",
 }
@@ -20,7 +21,7 @@ export default function App() {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [commandMap, setCommandMap] = React.useState(new Map<string, Command>());
   const [entries, setEntries] = React.useState<CommandEntry[]>([
-    { output: initBanner({ command: "" }), command: undefined },
+    { output: initBanner({ command: "" }), command: undefined, status: CommandStatus.Init },
     { output: null, command: null },
   ]);
 
