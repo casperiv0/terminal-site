@@ -1,10 +1,8 @@
 import * as React from "react";
-import { ArrowRight } from "react-bootstrap-icons";
-import { CommandEntry, CommandStatus } from "../App";
-import { useHistory } from "../hooks/useHistory";
+import { useInput } from "../hooks/useInput";
 import { classNames } from "../lib/classNames";
 import { Command } from "../lib/Command";
-import { getCommandName } from "../lib/utils";
+import { CommandEntry, CommandStatus } from "../lib/types";
 
 interface Props {
   entry: CommandEntry | null;
@@ -12,127 +10,34 @@ interface Props {
   handleNewCommand(args: string[]): void;
 }
 
-let hasAskedForPassword = false;
-
 export function Input({ entry, commandMap, handleNewCommand }: Props) {
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const passwordRef = React.useRef<HTMLInputElement | null>(null);
-  const history = useHistory();
 
-  const [lastCommandCount, setLastCommandCount] = React.useState(1);
-  const [currentCommand, setCurrentCommand] = React.useState<string>(getCommandFromEntry(entry));
+  const input = useInput({
+    entry,
+    inputRef,
+    passwordRef,
+    commandMap,
+    handleNewCommand,
+  });
 
-  const [askForPassword, setAskForPassword] = React.useState(false);
   const [password, setPassword] = React.useState("");
 
-  const { isSudo, commandName } = getCommandName(currentCommand.split(" "));
-  const isValidCommand = commandMap.has(commandName);
-
   React.useEffect(() => {
-    handleInputAreaClick();
+    input.handleInputAreaClick();
   }, [entry]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  React.useEffect(() => {
-    setCurrentCommand(getCommandFromEntry(entry));
-  }, [entry]);
-
-  function handleInputAreaClick() {
-    if (entry || askForPassword) return;
-
-    inputRef.current?.focus();
-    inputRef.current?.scrollIntoView({ behavior: "smooth" });
-  }
 
   function handlePasswordKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
-      handleInputKeydown(event, password);
+      input.handleInputKeydown(event, password);
     }
-  }
-
-  function handleInputKeydown(event: React.KeyboardEvent<HTMLInputElement>, password?: string) {
-    const key = event.key;
-    const ctrlKey = event.ctrlKey;
-
-    if (key === "l" && ctrlKey) {
-      event.preventDefault();
-      setAskForPassword(false);
-      handleNewCommand(["clear"]);
-    }
-
-    if (key === "c" && ctrlKey) {
-      event.preventDefault();
-
-      setCurrentCommand("");
-      setLastCommandCount(1);
-      handleNewCommand([""]);
-    }
-
-    if (key === "Enter") {
-      if (isSudo && !password && !hasAskedForPassword) {
-        setAskForPassword(true);
-        hasAskedForPassword = true;
-
-        setTimeout(() => {
-          passwordRef.current?.focus();
-        }, 50);
-
-        return;
-      }
-
-      handleNewCommand(currentCommand.split(" "));
-
-      if (currentCommand) {
-        setCurrentCommand("");
-        setLastCommandCount(1);
-        history.addCommandToHistory(currentCommand);
-      }
-    }
-
-    if (key === "ArrowUp") {
-      const lastEnteredCommand = history.getPreviousCommand(lastCommandCount);
-
-      if (lastEnteredCommand) {
-        setCurrentCommand(lastEnteredCommand);
-        setLastCommandCount((p) => p + 1);
-        console.log({
-          d: inputRef.current?.setSelectionRange(
-            lastEnteredCommand.length,
-            lastEnteredCommand.length,
-          ),
-        });
-      }
-    }
-
-    if (key === "ArrowDown") {
-      const nextEnteredCommand = history.getNextCommand(lastCommandCount);
-
-      if (nextEnteredCommand && lastCommandCount !== 1) {
-        setCurrentCommand(nextEnteredCommand);
-        setLastCommandCount((p) => p + 1);
-      } else {
-        setLastCommandCount(1);
-        setCurrentCommand("");
-      }
-    }
-
-    if (key === "Tab") {
-      event.preventDefault();
-      if (currentCommand.length <= 0) return;
-      const commands = Array.from(commandMap.keys());
-
-      const command = commands.find((command) => command.startsWith(commandName));
-      if (command) {
-        setCurrentCommand(`${isSudo ? "sudo " : ""}${command}`);
-      }
-    }
-
-    handleInputAreaClick();
   }
 
   return (
     <div
-      onClick={handleInputAreaClick}
-      className={classNames("w-full p-3", askForPassword ? "h-16" : "h-10")}
+      onClick={input.handleInputAreaClick}
+      className={classNames("w-full p-3", input.state.askForPassword ? "h-16" : "h-10")}
     >
       <div className="flex items-center h-4">
         <span className="mr-2">
@@ -154,24 +59,24 @@ export function Input({ entry, commandMap, handleNewCommand }: Props) {
           spellCheck="false"
           type="text"
           autoFocus
-          disabled={askForPassword || !!entry?.command}
+          disabled={input.state.askForPassword || !!entry?.command}
           ref={inputRef}
           className={classNames(
             "bg-transparent outline-none",
-            currentCommand
-              ? isValidCommand
+            input.state.currentCommand
+              ? input.command.isValidCommand
                 ? "text-green-500"
                 : "text-red-500"
               : "text-slate-300",
           )}
-          value={currentCommand}
-          onChange={(ev) => setCurrentCommand(ev.currentTarget.value.toLowerCase())}
-          onKeyDown={(ev) => handleInputKeydown(ev, password)}
-          size={currentCommand.length}
+          value={input.state.currentCommand}
+          onChange={(ev) => input.state.setCurrentCommand(ev.currentTarget.value.toLowerCase())}
+          onKeyDown={(ev) => input.handleInputKeydown(ev, password)}
+          size={input.state.currentCommand.length}
         />
       </div>
 
-      {askForPassword ? (
+      {input.state.askForPassword ? (
         <div className="mt-1 block ml-10">
           <span>[sudo] password for Dev-CasperTheGhost:</span>
           <input
@@ -190,7 +95,20 @@ export function Input({ entry, commandMap, handleNewCommand }: Props) {
   );
 }
 
-function getCommandFromEntry(entry: CommandEntry | null) {
-  if (!entry) return "";
-  return `${entry.command}${entry.args ? [" ", ...entry.args].join(" ") : ""}`.trim();
+function ArrowRight(props: JSX.IntrinsicElements["svg"]) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="currentColor"
+      viewBox="0 0 16 16"
+      {...props}
+    >
+      <path
+        fillRule="evenodd"
+        d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+      />
+    </svg>
+  );
 }

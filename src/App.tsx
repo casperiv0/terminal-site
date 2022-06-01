@@ -1,21 +1,8 @@
 import * as React from "react";
 import { Input } from "./components/Input";
 import { Command, loadCommands } from "./lib/Command";
-import { commandNotFound, initBanner } from "./lib/outputs";
-import { getCommandName } from "./lib/utils";
-
-export enum CommandStatus {
-  Init = "init",
-  Succeeded = "succeeded",
-  Failed = "failed",
-}
-
-export interface CommandEntry {
-  output: JSX.Element | string | null;
-  command: string | null | undefined;
-  status?: CommandStatus;
-  args?: string[];
-}
+import { CommandEntry, CommandStatus } from "./lib/types";
+import { commandNotFound, initBanner, getCommandName } from "./lib/utils";
 
 export default function App() {
   const containerRef = React.useRef<HTMLDivElement>(null);
