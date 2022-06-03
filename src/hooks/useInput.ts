@@ -1,14 +1,13 @@
 import React from "react";
-import { Command } from "../lib/Command";
 import type { CommandEntry } from "../lib/types";
 import { getCommandName } from "../lib/utils";
+import { useCommands } from "./useCommands";
 import { useHistory } from "./useHistory";
 
 interface UseInputOptions {
   inputRef: React.RefObject<HTMLInputElement>;
   passwordRef: React.RefObject<HTMLInputElement>;
   entry: CommandEntry | null;
-  commandMap: Map<string, Command>;
   handleNewCommand(args: string[]): void;
 }
 
@@ -16,6 +15,8 @@ let hasAskedForPassword = false;
 
 export function useInput(options: UseInputOptions) {
   const history = useHistory();
+  const commands = useCommands();
+  const commandMap = commands.state.commandMap;
 
   const [lastCommandCount, setLastCommandCount] = React.useState(1);
   const [currentCommand, setCurrentCommand] = React.useState<string>(
@@ -90,9 +91,9 @@ export function useInput(options: UseInputOptions) {
     if (key === "Tab") {
       event.preventDefault();
       if (currentCommand.length <= 0) return;
-      const commands = Array.from(options.commandMap.keys());
+      const commandsArr = commands.commandsArr;
 
-      const command = commands.find((command) => command.startsWith(commandName));
+      const command = commandsArr.find((command) => command.startsWith(commandName));
       if (command) {
         setCurrentCommand(`${isSudo ? "sudo " : ""}${command}`);
       }
@@ -109,19 +110,10 @@ export function useInput(options: UseInputOptions) {
   }
 
   const { isSudo, commandName } = getCommandName(currentCommand.split(" "));
-  const isValidCommand = options.commandMap.has(commandName);
+  const isValidCommand = commandMap.has(commandName);
 
-  const state = {
-    currentCommand,
-    setCurrentCommand,
-    askForPassword,
-  };
-
-  const command = {
-    isSudo,
-    commandName,
-    isValidCommand,
-  };
+  const state = { currentCommand, setCurrentCommand, askForPassword };
+  const command = { isSudo, commandName, isValidCommand };
 
   return {
     state,

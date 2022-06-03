@@ -8,6 +8,10 @@ export function getCommandName(args: string[]) {
   return { isSudo, commandArgs, commandName };
 }
 
+export function classNames(...classNames: unknown[]) {
+  return classNames.filter(Boolean).join(" ");
+}
+
 export interface CommandOutputOptions {
   command: string;
 }

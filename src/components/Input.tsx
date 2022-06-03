@@ -1,16 +1,16 @@
 import * as React from "react";
 import { useInput } from "../hooks/useInput";
-import { classNames } from "../lib/classNames";
-import { Command } from "../lib/Command";
+import { classNames } from "../lib/utils";
 import { CommandEntry, CommandStatus } from "../lib/types";
 
 interface Props {
   entry: CommandEntry | null;
-  commandMap: Map<string, Command>;
   handleNewCommand(args: string[]): void;
 }
 
-export function Input({ entry, commandMap, handleNewCommand }: Props) {
+export function Input({ entry, handleNewCommand }: Props) {
+  const [password, setPassword] = React.useState("");
+
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const passwordRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -18,11 +18,14 @@ export function Input({ entry, commandMap, handleNewCommand }: Props) {
     entry,
     inputRef,
     passwordRef,
-    commandMap,
     handleNewCommand,
   });
 
-  const [password, setPassword] = React.useState("");
+  const arrowTextColor = entry
+    ? entry.status === CommandStatus.Failed
+      ? "text-red-500"
+      : "text-green-500"
+    : "text-slate-300";
 
   React.useEffect(() => {
     input.handleInputAreaClick();
@@ -41,17 +44,7 @@ export function Input({ entry, commandMap, handleNewCommand }: Props) {
     >
       <div className="flex items-center h-4">
         <span className="mr-2">
-          <ArrowRight
-            className={classNames(
-              "fill-current",
-              entry
-                ? entry.status === CommandStatus.Failed
-                  ? "text-red-500"
-                  : "text-green-500"
-                : "text-slate-300",
-            )}
-            width={15}
-          />
+          <ArrowRight className={classNames("fill-current", arrowTextColor)} width={15} />
         </span>
         <span className="mr-2 text-blue-300">~</span>
 
