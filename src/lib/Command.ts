@@ -27,6 +27,7 @@ export async function loadCommands() {
     import("./commands/DateCommand"),
     import("./commands/RepoCommand"),
     import("./commands/SudoCommand"),
+    import("./commands/NeofetchCommand"),
   ]);
 
   for (const file of commands) {
