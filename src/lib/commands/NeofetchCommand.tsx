@@ -16,10 +16,10 @@ export default class NeofetchCommand extends Command {
       -+ssssssssssssssssssyyssss+-         Uptime: ${this.UPTIME}
     .ossssssssssssssssssdMMMNysssso.       OS: Ubuntu [Windows 10] x86_64
    /ssssssssssshdmmNNmmyNMMMMhssssss/      Kernel: WSL2
-  +ssssssssshmydMMMMMMMNddddyssssssss+     Memory: 32 GB (35%)
+  +ssssssssshmydMMMMMMMNddddyssssssss+     Memory: 32 GB
  /sssssssshNMMMyhhyyyyhmNMMMNhssssssss/    Shell: zsh
 .ssssssssdMMMNhsssssssssshNMMMdssssssss.   CPU: AMD Ryzen 7 3800X @ 4GHz
-+sssshhhyNMMNyssssssssssssyNMMMysssssss+
++sssshhhyNMMNyssssssssssssyNMMMysssssss+   Terminal: Windows Terminal
 ossyNMMMNyMMhsssssssssssssshmmmhssssssso
 ossyNMMMNyMMhsssssssssssssshmmmhssssssso
 +sssshhhyNMMNyssssssssssssyNMMMysssssss+

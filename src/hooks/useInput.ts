@@ -25,6 +25,18 @@ export function useInput(options: UseInputOptions) {
   const [askForPassword, setAskForPassword] = React.useState(false);
 
   React.useEffect(() => {
+    const handler = () => {
+      options.inputRef.current?.focus();
+    };
+
+    window.addEventListener("click", handler);
+
+    return () => {
+      window.removeEventListener("click", handler);
+    };
+  }, [options.inputRef]);
+
+  React.useEffect(() => {
     setCurrentCommand(getCommandFromEntry(options.entry));
   }, [options.entry]);
 
