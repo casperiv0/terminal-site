@@ -13,7 +13,7 @@ export default class WhoamiCommand extends Command {
         target="_blank"
         rel="noreferrer"
         className="hover:underline"
-        href="https://caspertheghost.me"
+        href="https://casperiv.dev"
       >
         {this.WHOAMI}
       </a>
