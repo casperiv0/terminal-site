@@ -9,12 +9,7 @@ export default class WhoamiCommand extends Command {
 
   render(): string | JSX.Element {
     return (
-      <a
-        target="_blank"
-        rel="noreferrer"
-        className="hover:underline"
-        href="https://casperiv.dev"
-      >
+      <a target="_blank" rel="noreferrer" className="hover:underline" href="https://casperiv.dev">
         {this.WHOAMI}
       </a>
     );

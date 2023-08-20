@@ -136,6 +136,6 @@ export function useInput(options: UseInputOptions) {
 }
 
 function getCommandFromEntry(entry: CommandEntry | null) {
-  if (!entry || !entry.command) return "";
+  if (!entry?.command) return "";
   return `${entry.command}${entry.args ? [" ", ...entry.args].join(" ") : ""}`.trim();
 }

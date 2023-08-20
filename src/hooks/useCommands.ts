@@ -1,5 +1,5 @@
 import * as React from "react";
-import create from "zustand";
+import { create } from "zustand";
 import { Command } from "../lib/Command";
 import { CommandEntry, CommandStatus } from "../lib/types";
 import { commandNotFound, getCommandName, initBanner } from "../lib/utils";
