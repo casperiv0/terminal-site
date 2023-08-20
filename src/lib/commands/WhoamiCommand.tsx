@@ -1,7 +1,7 @@
 import { Command } from "../Command";
 
 export default class WhoamiCommand extends Command {
-  private WHOAMI = "Dev-CasperTheGhost";
+  private WHOAMI = "Casper Iversen";
 
   constructor() {
     super({ name: "whoami" });

@@ -13,7 +13,7 @@ export default class RepoCommand extends Command {
           rel="noreferrer"
           target="_blank"
           className="underline font-semibold"
-          href="https://github.com/dev-caspertheghost/terminal-site"
+          href="https://github.com/casperiv/terminal-site"
         >
           can be found on GitHub
         </a>

@@ -71,7 +71,7 @@ export function Input({ entry, handleNewCommand }: Props) {
 
       {input.state.askForPassword ? (
         <div className="mt-1 block ml-10">
-          <span>[sudo] password for Dev-CasperTheGhost:</span>
+          <span>[sudo] password for casperiv:</span>
           <input
             ref={passwordRef}
             type="password"
